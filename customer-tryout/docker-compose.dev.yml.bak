@@ -3,4 +3,4 @@ services:
     container_name: node-app-dev
     # command: yarn dev -L
     command: ./dev.sh
-    # command: sleep infinity
+    command: sleep infinity

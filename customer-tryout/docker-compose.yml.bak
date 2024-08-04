@@ -58,4 +58,4 @@ services:
       - .:/usr/src/node-app
     networks:
       - node-network
-
+    command: sleep infinity

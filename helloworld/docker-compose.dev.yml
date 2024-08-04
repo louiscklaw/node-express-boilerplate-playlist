@@ -2,5 +2,5 @@ services:
   node-app:
     container_name: node-app-dev
     # command: yarn dev -L
-    command: ./dev.sh
-    # command: sleep infinity
+    # command: ./dev.sh
+    command: sleep infinity
