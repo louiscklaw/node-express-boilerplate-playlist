@@ -1,0 +1,61 @@
+name: poc_node_express_boilerplate
+
+volumes:
+  dbdata:
+
+networks:
+  node-network:
+    driver: bridge
+
+services:
+  mongodb:
+    image: mongo:4.2.1-bionic
+    ports:
+      - '27017:27017'
+    volumes:
+      - dbdata:/data/db
+    networks:
+      - node-network
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017/
+      ME_CONFIG_BASICAUTH: false
+    networks:
+      - node-network
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.001'
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - 1025:1025 # smtp port
+      - 8025:8025 # web-client
+    networks:
+      - node-network
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.001'
+
+  node-app:
+    build: .
+    image: node-app
+    environment:
+      - MONGODB_URL=mongodb://mongodb:27017/node-boilerplate
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mongodb
+      - mailhog
+    volumes:
+      - .:/usr/src/node-app
+    networks:
+      - node-network
+    command: sleep infinity
