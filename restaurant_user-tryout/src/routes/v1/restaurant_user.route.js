@@ -1,38 +1,58 @@
 const express = require('express');
 const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
-const customerValidation = require('../../validations/customer.validation');
-const customerController = require('../../controllers/customer.controller');
+const restaurantUserValidation = require('../../validations/restaurant_user.validation');
+const restaurantUserController = require('../../controllers/restaurant_user.controller');
 
 const router = express.Router();
 
 router
   .route('/')
-  .post(auth('manageCustomers'), validate(customerValidation.createCustomer), customerController.createCustomer)
-  .get(auth('getCustomers'), validate(customerValidation.getCustomers), customerController.getCustomers);
+  .post(
+    auth('manageRestaurantUsers'),
+    validate(restaurantUserValidation.createRestaurantUser),
+    restaurantUserController.createRestaurantUser
+  )
+  .get(
+    auth('getRestaurantUsers'),
+    validate(restaurantUserValidation.getRestaurantUsers),
+    restaurantUserController.getRestaurantUsers
+  );
 
 router
-  .route('/:customerId')
-  .get(auth('getCustomers'), validate(customerValidation.getCustomer), customerController.getCustomer)
-  .patch(auth('manageCustomers'), validate(customerValidation.updateCustomer), customerController.updateCustomer)
-  .delete(auth('manageCustomers'), validate(customerValidation.deleteCustomer), customerController.deleteCustomer);
+  .route('/:restaurantUserId')
+  .get(
+    auth('getRestaurantUsers'),
+    validate(restaurantUserValidation.getRestaurantUser),
+    restaurantUserController.getRestaurantUser
+  )
+  .patch(
+    auth('manageRestaurantUsers'),
+    validate(restaurantUserValidation.updateRestaurantUser),
+    restaurantUserController.updateRestaurantUser
+  )
+  .delete(
+    auth('manageRestaurantUsers'),
+    validate(restaurantUserValidation.deleteRestaurantUser),
+    restaurantUserController.deleteRestaurantUser
+  );
 
 module.exports = router;
 
 /**
  * @swagger
  * tags:
- *   name: Customers
- *   description: Customer management and retrieval
+ *   name: RestaurantUsers
+ *   description: RestaurantUser management and retrieval
  */
 
 /**
  * @swagger
- * /customers:
+ * /restaurant-users:
  *   post:
- *     summary: Create a customer
- *     description: Only admins can create other customers.
- *     tags: [Customers]
+ *     summary: Create a restaurant user
+ *     description: Only admins can create other restaurant users.
+ *     tags: [RestaurantUsers]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -58,19 +78,19 @@ module.exports = router;
  *                 description: At least one number and one letter
  *               role:
  *                  type: string
- *                  enum: [customer, admin]
+ *                  enum: [restaurant_user, admin]
  *             example:
  *               name: fake name
  *               email: fake@example.com
  *               password: password1
- *               role: customer
+ *               role: restaurant_user
  *     responses:
  *       "201":
  *         description: Created
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/Customer'
+ *                $ref: '#/components/schemas/RestaurantUser'
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
  *       "401":
@@ -79,9 +99,9 @@ module.exports = router;
  *         $ref: '#/components/responses/Forbidden'
  *
  *   get:
- *     summary: Get all customers
- *     description: Only admins can retrieve all customers.
- *     tags: [Customers]
+ *     summary: Get all restaurant_users
+ *     description: Only admins can retrieve all restaurant_users.
+ *     tags: [RestaurantUsers]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -89,12 +109,12 @@ module.exports = router;
  *         name: name
  *         schema:
  *           type: string
- *         description: Customer name
+ *         description: RestaurantUser name
  *       - in: query
  *         name: role
  *         schema:
  *           type: string
- *         description: Customer role
+ *         description: RestaurantUser role
  *       - in: query
  *         name: sortBy
  *         schema:
@@ -106,7 +126,7 @@ module.exports = router;
  *           type: integer
  *           minimum: 1
  *         default: 10
- *         description: Maximum number of customers
+ *         description: Maximum number of restaurant_users
  *       - in: query
  *         name: page
  *         schema:
@@ -125,7 +145,7 @@ module.exports = router;
  *                 results:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Customer'
+ *                     $ref: '#/components/schemas/RestaurantUser'
  *                 page:
  *                   type: integer
  *                   example: 1
@@ -146,11 +166,11 @@ module.exports = router;
 
 /**
  * @swagger
- * /customers/{id}:
+ * /restaurant_users/{id}:
  *   get:
- *     summary: Get a customer
- *     description: Logged in customers can fetch only their own customer information. Only admins can fetch other customers.
- *     tags: [Customers]
+ *     summary: Get a restaurant_user
+ *     description: Logged in restaurant_users can fetch only their own information. Only admins can fetch other restaurant_users.
+ *     tags: [RestaurantUsers]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -159,14 +179,14 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: Customer id
+ *         description: RestaurantUser id
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/Customer'
+ *                $ref: '#/components/schemas/RestaurantUser'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -175,9 +195,9 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  *
  *   patch:
- *     summary: Update a customer
- *     description: Logged in customers can only update their own information. Only admins can update other customers.
- *     tags: [Customers]
+ *     summary: Update a restaurant_user
+ *     description: Logged in restaurant_users can only update their own information. Only admins can update other restaurant_users.
+ *     tags: [RestaurantUsers]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -186,7 +206,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: Customer id
+ *         description: RestaurantUser id
  *     requestBody:
  *       required: true
  *       content:
@@ -215,7 +235,7 @@ module.exports = router;
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/Customer'
+ *                $ref: '#/components/schemas/RestaurantUser'
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
  *       "401":
@@ -226,9 +246,9 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  *
  *   delete:
- *     summary: Delete a customer
- *     description: Logged in customers can delete only themselves. Only admins can delete other customers.
- *     tags: [Customers]
+ *     summary: Delete a restaurant_user
+ *     description: Logged in restaurant_users can delete only themselves. Only admins can delete other restaurant_users.
+ *     tags: [RestaurantUsers]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -237,7 +257,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: Customer id
+ *         description: RestaurantUser id
  *     responses:
  *       "200":
  *         description: No content

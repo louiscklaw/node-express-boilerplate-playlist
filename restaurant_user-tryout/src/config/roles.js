@@ -7,6 +7,9 @@ const allRoles = {
     //
     'getCustomers',
     'manageCustomers',
+    //
+    'getRestaurantUsers',
+    'manageRestaurantUsers',
   ],
 };
 
